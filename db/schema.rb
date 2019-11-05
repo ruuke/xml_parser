@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2019_11_05_163435) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "batches", force: :cascade do |t|
+    t.text "guid", null: false, comment: "Уникальный номер из файла xml"
+    t.bigint "batch_id", null: false, comment: "Номер списка посылок"
+    t.datetime "creation_date", null: false, comment: "Дата создания списка посылок"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["batch_id"], name: "index_batches_on_batch_id"
+    t.index ["guid"], name: "index_batches_on_guid"
+  end
 
 end
