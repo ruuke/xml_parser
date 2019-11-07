@@ -36,10 +36,6 @@
         <ItemQty>1</ItemQty>
         <ParcelPrice>6293</ParcelPrice>
       </InvoiceData>
-    </Invoice>
-    <Batch>
-      <BatchID>844986</BatchID>
-      <CreationDate>21.05.2015</CreationDate>
-    </Batch>
+    </Invoice>    
   </FileData>
 </Root>

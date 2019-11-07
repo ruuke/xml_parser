@@ -10,19 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_05_163435) do
+ActiveRecord::Schema.define(version: 2019_11_07_151719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "batches", force: :cascade do |t|
-    t.text "guid", null: false, comment: "Уникальный номер из файла xml"
-    t.bigint "batch_id", null: false, comment: "Номер списка посылок"
+  create_table "batches", primary_key: "batch_id", id: :serial, comment: "Номер списка посылок", force: :cascade do |t|
+    t.string "guid", null: false, comment: "Уникальный номер из файла xml"
     t.datetime "creation_date", null: false, comment: "Дата создания списка посылок"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["batch_id"], name: "index_batches_on_batch_id"
-    t.index ["guid"], name: "index_batches_on_guid"
+  end
+
+  create_table "invoices", primary_key: "invoice_operation_number", id: :serial, force: :cascade do |t|
+    t.integer "company_code", null: false
+    t.datetime "invoice_operation_date", null: false, comment: "Дата отправки посылки"
+    t.bigint "batch_id_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["batch_id_id"], name: "index_invoices_on_batch_id_id"
+  end
+
+  create_table "invoices_parcels", force: :cascade do |t|
+    t.integer "item_qty", null: false, comment: "Количество товара"
+    t.decimal "parcel_price", precision: 7, scale: 2, null: false, comment: "Цена единицы товара для покупателя"
+    t.bigint "invoice_operation_number_id"
+    t.bigint "parcel_code_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invoice_operation_number_id"], name: "index_invoices_parcels_on_invoice_operation_number_id"
+    t.index ["parcel_code_id"], name: "index_invoices_parcels_on_parcel_code_id"
+  end
+
+  create_table "parcels", primary_key: "parcel_code", id: :string, force: :cascade do |t|
+    t.string "title", default: "Item_1000000"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

@@ -1,0 +1,2 @@
+class InvoicesParcel < ApplicationRecord
+end
