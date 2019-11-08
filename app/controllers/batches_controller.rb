@@ -4,6 +4,18 @@ class BatchesController < ApplicationController
   end
 
   def create
+    @batch = Batch.new(batch_params)
 
+    if @batch.save
+      render :new, notice: "OK"
+    else
+      render :new
+    end
+  end
+
+  private
+
+  def batch_params
+    params.require(:batch).permit(:file)
   end
 end
