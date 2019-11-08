@@ -5,13 +5,14 @@ class Batch < ApplicationRecord
 
   validates :batch_id, presence: true,
                        numericality: true,
-                       length: { is: 7 }
+                       length: { in: 7 }
 
   validates :creation_date, presence: true
   validates :guid, presence: true
   validate :file_extension
 
   def file_extension
-    errors.add("Расширение файла долно быть .xml") if file.filename.extention == ".xml"
+    message = "Расширение файла долно быть .xml"
+    errors.add(:batch, message) unless file.filename.extension == ".xml"
   end
 end

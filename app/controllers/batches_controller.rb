@@ -5,6 +5,7 @@ class BatchesController < ApplicationController
 
   def create
     @batch = Batch.new(batch_params)
+    XmlParserService.call(@batch)
 
     if @batch.save
       render :new, notice: "OK"
