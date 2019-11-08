@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 2019_11_07_151719) do
 
   create_table "invoices_parcels", force: :cascade do |t|
     t.integer "item_qty", null: false, comment: "Количество товара"
-    t.decimal "parcel_price", precision: 7, scale: 2, null: false, comment: "Цена единицы товара для покупателя"
     t.bigint "invoice_operation_number_id"
     t.bigint "parcel_code_id"
     t.datetime "created_at", null: false
@@ -44,6 +43,7 @@ ActiveRecord::Schema.define(version: 2019_11_07_151719) do
 
   create_table "parcels", primary_key: "parcel_code", id: :string, force: :cascade do |t|
     t.string "title", default: "Item_1000000"
+    t.decimal "parcel_price", precision: 7, scale: 2, null: false, comment: "Цена единицы товара для покупателя"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

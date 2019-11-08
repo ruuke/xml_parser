@@ -1,4 +1,6 @@
 class Batch < ApplicationRecord
+  has_many :invoices
+
   validates :batch_id, presence: true,
                        numericality: true,
                        length: { is: 7 }
