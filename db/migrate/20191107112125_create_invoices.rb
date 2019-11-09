@@ -4,10 +4,13 @@ class CreateInvoices < ActiveRecord::Migration[5.2]
       t.integer :invoice_operation_number, primary_key: true
       t.integer :company_code, null: false
       t.datetime :invoice_operation_date, null: false, comment: 'Дата отправки посылки'
-      t.references :batch_id,  references: :batches
+      t.references :batch_batch_id,  references: :batches, null: false
 
       t.timestamps
     end
+
+    rename_column :invoices, :batch_batch_id_id, :batch_id
+    add_foreign_key :invoices, :batches, column: 'batch_id', primary_key: 'batch_id'
 
     execute <<-SQL
       ALTER TABLE invoices

@@ -1,4 +1,5 @@
 class Parcel < ApplicationRecord
+  has_many :invoices_parcels
   has_many :invoices, through: :invoices_parcels
 
   validates :parcel_code, presence: true

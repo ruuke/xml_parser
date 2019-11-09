@@ -13,10 +13,12 @@ class XmlParserService
   def call
     parse_data
     batch_update
+    create_invoices
   end
 
+  private
+
   def parse_data
-    # binding.pry
     xml = File.open("#{@batch.file_path}")
     doc = Hash.from_xml(xml)
 
@@ -30,30 +32,55 @@ class XmlParserService
     @batch.batch_id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
   end
+
+  def create_invoices
+    if @invoices.is_a?(Hash)
+      @new_invoice = @batch.invoices.build
+
+      @new_invoice.company_code = @invoices['InvoiceOperation']['CompanyCode']
+      @new_invoice.invoice_operation_number = @invoices['InvoiceOperation']['InvoiceOperationNumber']
+      @new_invoice.invoice_operation_date = @invoices['InvoiceOperation']['InvoiceOperationDate']
+
+      create_invoices_parcels(@new_invoice, @invoices['InvoiceData'])
+    else
+      @invoices.each do |invoice|
+        @new_invoice = @batch.invoices.build
+
+        @new_invoice.company_code = invoice['InvoiceOperation']['CompanyCode']
+        @new_invoice.invoice_operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
+        @new_invoice.invoice_operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
+
+        create_invoices_parcels(@new_invoice, invoice['InvoiceData'])
+      end
+    end
+  end
+
+  def create_invoices_parcels(invoice, data)
+    invoice_data = data
+    new_invoice = invoice
+
+    if invoice_data.is_a?(Hash)
+      create_parcel(invoice_data['ParcelCode'], data['ParcelPrice'])
+
+      new_invoice.invoices_parcels.build(
+        parcel_id: invoice_data['ParcelCode'],
+        item_qty: invoice_data['ItemQty'],
+        parcel_price: invoice_data['ParcelPrice']
+      )
+    else
+      invoice_data.each do |data|
+        create_parcel(data['ParcelCode'], data['ParcelPrice'])
+
+        new_invoice.invoices_parcels.build(
+          parcel_id: data['ParcelCode'],
+          item_qty: data['ItemQty'],
+          parcel_price: data['ParcelPrice']
+        )
+      end
+    end
+  end
+
+  def create_parcel(parcel_code, parcel_price)
+    Parcel.create(parcel_code: parcel_code, parcel_price: parcel_price) unless Parcel.exists?(parcel_code: parcel_code)
+  end
 end
-
-
-    # batch_id = batch_data['BatchID']
-    # batch_creation_date = batch_data['CreationDate']
-
-
-    # invoices.each do |invoice|
-    #   invoice_operation = invoice['InvoiceOperation']
-    #   puts company_code = invoice_operation['CompanyCode']
-    #   puts invoice_operation_number = invoice_operation['InvoiceOperationNumber']
-    #   puts invoice_operation_date = invoice_operation['InvoiceOperationDate']
-
-    #   invoice_data = invoice['InvoiceData']
-
-    #   if invoice_data.is_a?(Hash)
-    #     puts parcel_code = invoice['InvoiceData']['ParcelCode']
-    #     puts item_qty = invoice['InvoiceData']['ItemQty']
-    #     puts parcel_price = invoice['InvoiceData']['ParcelPrice']
-    #   else
-    #     invoice_data.each do |data|
-    #       puts parcel_code = data['ParcelCode']
-    #       puts item_qty = data['ItemQty']
-    #       puts parcel_price = data['ParcelPrice']
-    #     end
-    #   end
-    # end
