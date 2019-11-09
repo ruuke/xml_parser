@@ -3,7 +3,7 @@ class XmlParserService
     new(batch).call
   end
 
-  attr_accessor :batch_guid, :batch_data, :invoices
+  attr_accessor :batch, :batch_guid, :batch_data, :invoices
 
   def initialize(batch)
     @batch = batch
@@ -14,10 +14,12 @@ class XmlParserService
 
   def call
     parse_data
+    batch_update
   end
 
   def parse_data
-    xml = File.open(@batch.file_path)
+    # binding.pry
+    xml = File.open(@batch.file.blob.key)
     doc = Hash.from_xml(xml)
 
     batch_guid = doc['Root']['FileAttribute']['GUID']
