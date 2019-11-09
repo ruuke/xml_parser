@@ -3,8 +3,6 @@ class XmlParserService
     new(batch).call
   end
 
-  attr_accessor :batch, :batch_guid, :batch_data, :invoices
-
   def initialize(batch)
     @batch = batch
     @batch_guid = nil
@@ -19,18 +17,18 @@ class XmlParserService
 
   def parse_data
     # binding.pry
-    xml = File.open(@batch.file.blob.key)
+    xml = File.open("#{@batch.file_path}")
     doc = Hash.from_xml(xml)
 
-    batch_guid = doc['Root']['FileAttribute']['GUID']
-    batch_data = doc['Root']['FileData']['Batch']
-    invoices = doc['Root']['FileData']['Invoice']
+    @batch_guid = doc['Root']['FileAttribute']['GUID']
+    @batch_data = doc['Root']['FileData']['Batch']
+    @invoices = doc['Root']['FileData']['Invoice']
   end
 
   def batch_update
-    batch.guid = batch_guid
-    batch.batch_id = batch_data['BatchID']
-    batch.creation_date = batch_data['CreationDate']
+    @batch.guid = @batch_guid
+    @batch.batch_id = @batch_data['BatchID']
+    @batch.creation_date = @batch_data['CreationDate']
   end
 end
 
