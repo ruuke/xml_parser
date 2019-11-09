@@ -1,5 +1,5 @@
 class Batch < ApplicationRecord
-  has_many :invoices
+  has_many :invoices, autosave: true
 
   has_one_attached :file
 
@@ -11,6 +11,8 @@ class Batch < ApplicationRecord
   validates :guid, presence: true, uniqueness: true
   validate :file_extension
 
+  validates_associated :invoices
+
   def file_path
     ActiveStorage::Blob.service.path_for(file.key)
   end
@@ -19,7 +21,7 @@ class Batch < ApplicationRecord
 
   def file_extension
     message = "Расширение файла долно быть .xml"
-    errors.add(:batch, message) unless file.filename.extension == "xml"
+    errors.add(:file, message) unless file.filename.extension == "xml"
   end
 
 end

@@ -1,10 +1,10 @@
 class Invoice < ApplicationRecord
   belongs_to :batch
 
-  has_many :invoices_parcels
+  has_many :invoices_parcels, autosave: true
   has_many :parcels, through: :invoices_parcels
 
-  # validates_length_of :invoices_parcels, in: 1..10
+  validates :invoices_parcels, length: { minimum: 1, maximum: 10 }
 
   validates :invoice_operation_number, presence: true,
                                        numericality: true,
@@ -16,4 +16,6 @@ class Invoice < ApplicationRecord
 
   validates :invoice_operation_date, presence: true
   validates :company_code, presence: true
+
+  validates_associated :invoices_parcels
 end

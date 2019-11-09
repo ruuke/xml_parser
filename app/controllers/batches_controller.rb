@@ -6,6 +6,7 @@ class BatchesController < ApplicationController
   rescue_from ActionController::ParameterMissing, with: :rescue_unattached_file
   rescue_from REXML::ParseException, with: :rescue_parse_exception
   rescue_from PG::UniqueViolation, with: :rescue_duplicate
+  rescue_from NoMethodError, with: :rescue_no_method_error
 
   def new
     @batch = Batch.new
@@ -44,5 +45,9 @@ class BatchesController < ApplicationController
 
   def rescue_duplicate
     redirect_to new_batch_url, notice: 'Попытка повторной загрузки файла.'
+  end
+
+  def rescue_no_method_error
+    redirect_to new_batch_url, notice: 'Невалидное содержимое файла.'
   end
 end
