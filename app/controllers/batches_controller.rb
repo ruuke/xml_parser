@@ -44,7 +44,7 @@ class BatchesController < ApplicationController
   end
 
   def rescue_duplicate
-    redirect_to new_batch_url, notice: 'Попытка повторной загрузки файла.'
+    redirect_to new_batch_url, notice: 'Попытка повторной загрузки списка.'
   end
 
   def rescue_no_method_error

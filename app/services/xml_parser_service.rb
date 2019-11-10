@@ -31,6 +31,8 @@ class XmlParserService
     @batch.guid = @batch_guid
     @batch.batch_id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
+
+    return if Batch.exists?(guid: @batch_guid)
   end
 
   def create_invoices
@@ -58,6 +60,8 @@ class XmlParserService
   def create_invoices_parcels(invoice, data)
     invoice_data = data
     new_invoice = invoice
+
+    binding.pry
 
     if invoice_data.is_a?(Hash)
       create_parcel(invoice_data['ParcelCode'], data['ParcelPrice'])

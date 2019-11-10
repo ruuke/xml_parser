@@ -8,7 +8,7 @@ class Batch < ApplicationRecord
                        length: { is: 7 }
 
   validates :creation_date, presence: true
-  validates :guid, presence: true, uniqueness: true
+  validates :guid, uniqueness: true, presence: true
   validate :file_extension
 
   validates_associated :invoices

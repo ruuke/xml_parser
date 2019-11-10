@@ -11,6 +11,6 @@ class InvoicesParcel < ApplicationRecord
   # добавляем единицу перед ведущими нулями и проверяем кол-во цифр
   def validate_numbers_of_digits
     message = "Кол-во чисел в поле должно быть ровно 15"
-    errors.add(:parcel_id, message) if ('1' << parcel_id.to_i.digits.size != 16)
+    errors.add(:parcel_id, message) unless ('1' << parcel_id).to_i.digits.size == 16
   end
 end
