@@ -1,13 +1,7 @@
+# Сервис парсинга и создания объектов в БД из прикрепленного файла
 class XmlParserService
   def self.call(batch)
     new(batch).call
-  end
-
-  def initialize(batch)
-    @batch = batch
-    @batch_guid = nil
-    @batch_data = nil
-    @invoices = nil
   end
 
   def call
@@ -18,6 +12,14 @@ class XmlParserService
 
   private
 
+  def initialize(batch)
+    @batch = batch
+    @batch_guid = nil
+    @batch_data = nil
+    @invoices = nil
+  end
+
+  # получаем данные из xml файла
   def parse_data
     xml = File.open("#{@batch.file_path}")
     doc = Hash.from_xml(xml)
@@ -27,7 +29,9 @@ class XmlParserService
     @invoices = doc['Root']['FileData']['Invoice']
   end
 
+  # обновляем атрибуты переданносго в сервис объекта и проверяем уникальность GUID
   def batch_update
+    binding.pry
     @batch.guid = @batch_guid
     @batch.batch_id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
@@ -35,6 +39,7 @@ class XmlParserService
     return if Batch.exists?(guid: @batch_guid)
   end
 
+  # создаем объекты накладных
   def create_invoices
     if @invoices.is_a?(Hash)
       @new_invoice = @batch.invoices.build
@@ -57,6 +62,7 @@ class XmlParserService
     end
   end
 
+  # создаем посылки
   def create_invoices_parcels(invoice, data)
     invoice_data = data
     new_invoice = invoice
@@ -82,6 +88,7 @@ class XmlParserService
     end
   end
 
+  # создаем товары
   def create_parcel(parcel_code, parcel_price)
     Parcel.create(parcel_code: parcel_code, parcel_price: parcel_price) unless Parcel.exists?(parcel_code: parcel_code)
   end

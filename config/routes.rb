@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   root 'batches#new'
 
-  resources :batches
+  resources :batches, only: [:new, :create, :show]
 end
