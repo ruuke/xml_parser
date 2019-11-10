@@ -61,8 +61,6 @@ class XmlParserService
     invoice_data = data
     new_invoice = invoice
 
-    binding.pry
-
     if invoice_data.is_a?(Hash)
       create_parcel(invoice_data['ParcelCode'], data['ParcelPrice'])
 

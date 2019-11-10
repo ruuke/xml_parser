@@ -42,6 +42,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'rspec-rails', '~> 3.8'
   gem 'factory_bot_rails'
+  gem 'rspec-collection_matchers'
 end
 
 group :development do
