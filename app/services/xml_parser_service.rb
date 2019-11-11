@@ -31,7 +31,6 @@ class XmlParserService
 
   # обновляем атрибуты переданносго в сервис объекта и проверяем уникальность GUID
   def batch_update
-    binding.pry
     @batch.guid = @batch_guid
     @batch.batch_id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
