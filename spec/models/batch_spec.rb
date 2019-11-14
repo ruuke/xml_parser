@@ -5,9 +5,9 @@ describe Batch, type: :model do
 
   it { should have_many(:invoices) }
 
-  it { should validate_presence_of :batch_id }
-  it { should validate_numericality_of :batch_id }
-  it { should allow_value(1234567).for(:batch_id) }
+  it { should validate_presence_of :id }
+  it { should validate_numericality_of :id }
+  it { should allow_value(1234567).for(:id) }
 
   it { should validate_presence_of :creation_date }
 
