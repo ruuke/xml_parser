@@ -5,7 +5,8 @@ class Invoice < ApplicationRecord
   has_many :parcels, through: :invoices_parcels
 
   validates :invoice_operation_number, presence: true,
-                                       numericality: true
+                                       numericality: true,
+                                       uniqueness: true
 
   validates_format_of :invoice_operation_number, with: /[0-9]{1,9}/
 

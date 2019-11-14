@@ -34,8 +34,6 @@ class XmlParserService
     @batch.guid = @batch_guid
     @batch.id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
-
-    return if Batch.exists?(guid: @batch_guid)
   end
 
   # создаем объекты накладных
@@ -77,6 +75,6 @@ class XmlParserService
 
   # создаем товары
   def create_parcel(code, price)
-    Parcel.create(code: code, price: price) unless Parcel.exists?(code: code)
+    Parcel.create(code: code, price: price)
   end
 end

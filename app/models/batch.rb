@@ -4,7 +4,8 @@ class Batch < ApplicationRecord
   has_one_attached :file
 
   validates :id, presence: true,
-                 numericality: true
+                 numericality: true,
+                 uniqueness: true
 
   validates_format_of :id, with: /[0-9]{7}/
 

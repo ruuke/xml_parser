@@ -1,11 +1,14 @@
 require 'rails_helper'
 
 describe Invoice, type: :model do
+  subject {build :invoice }
+
   it { should belong_to(:batch) }
   it { should have_many(:invoices_parcels) }
   it { should have_many(:parcels).through(:invoices_parcels) }
 
   it { should validate_presence_of :invoice_operation_number }
+  it { should validate_uniqueness_of :invoice_operation_number }
   it { should validate_numericality_of :invoice_operation_number }
   it { should allow_value(123456789).for(:invoice_operation_number) }
 
