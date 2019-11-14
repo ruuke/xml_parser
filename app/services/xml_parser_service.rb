@@ -52,29 +52,6 @@ class XmlParserService
     new_invoice.invoice_operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
     new_invoice.invoice_operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
 
-    handle_invoices_parcels(new_invoice, invoice['InvoiceData'])
-  end
-
-  # создаем посылки
-  def handle_invoices_parcels(invoice, invoice_data)
-    if invoice_data.is_a?(Hash)
-      create_invoices_parcel(invoice, invoice_data)
-    else
-      invoice_data.each { |data| create_invoices_parcel(invoice, data) }
-    end
-  end
-
-  def create_invoices_parcel(invoice, invoice_data)
-    create_parcel(invoice_data['ParcelCode'], invoice_data['ParcelPrice'])
-
-    invoice.invoices_parcels.build(
-      parcel_id: invoice_data['ParcelCode'],
-      item_qty: invoice_data['ItemQty']
-    )
-  end
-
-  # создаем товары
-  def create_parcel(code, price)
-    Parcel.create(code: code, price: price)
+    HandleInvoicesParcelsJob.perform_now(new_invoice, invoice['InvoiceData'])
   end
 end

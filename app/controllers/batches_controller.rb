@@ -4,9 +4,9 @@ class BatchesController < ApplicationController
   before_action :set_batch, only: %i[show]
 
   rescue_from ActionController::ParameterMissing, with: :rescue_unattached_file
-  # # обрабатываем все что не соответсвует валидному файлу
+  # обрабатываем все что не соответсвует валидному файлу
   rescue_from REXML::ParseException, with: :rescue_parse_exception
-  # # плохо, но куда деваться, обрабатываем nil'ы и отсутстие данных файле
+  # плохо, но куда деваться, обрабатываем nil'ы и отсутстие данных файле
   rescue_from NoMethodError, with: :rescue_parse_exception
 
   def new
