@@ -1,0 +1,9 @@
+<%= form_with model: @batch, local: true do |form| %>
+<%= render 'shared/errors', resource: @batch %>
+  <p>
+    <%= form.label :file %><br>
+    <%= form.file_field :file %>
+  </p>
+
+  <p><%= form.submit %></p>
+<% end %>
