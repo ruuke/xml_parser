@@ -17,7 +17,7 @@ class BatchesController < ApplicationController
 
   def create
     @batch = Batch.new(batch_params)
-    XmlParserService.call(@batch)
+    CreateBatchJob.perform_now(@batch)
 
     if @batch.save
       redirect_to @batch, notice: "OK"

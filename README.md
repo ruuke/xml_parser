@@ -23,7 +23,9 @@
   $ rake db:migrate<br/>
 
 4) Запуск приложения<br/>
+  sudo apt-get install redis-server<br/>
   rails s<br/>
+  sidekiq<br/>
   http://localhost:3000/<br/>
 
 5) Запуск тестов<br/>
