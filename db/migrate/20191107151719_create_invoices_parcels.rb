@@ -21,11 +21,11 @@ class CreateInvoicesParcels < ActiveRecord::Migration[5.2]
         ALTER COLUMN parcel_code_id_id SET DATA TYPE varchar(15);
     SQL
 
-    rename_column :invoices_parcels, :invoice_invoice_operation_number_id_id, :invoice_number
-    rename_column :invoices_parcels, :parcel_code_id_id, :parcel_code
+    rename_column :invoices_parcels, :invoice_invoice_operation_number_id_id, :invoice_id
+    rename_column :invoices_parcels, :parcel_code_id_id, :parcel_id
 
-    add_foreign_key :invoices_parcels, :invoices, column: 'invoice_number', primary_key: 'invoice_operation_number'
-    add_foreign_key :invoices_parcels, :parcels, column: 'parcel_code', primary_key: 'code'
+    add_foreign_key :invoices_parcels, :invoices, column: 'invoice_id', primary_key: 'invoice_operation_number'
+    add_foreign_key :invoices_parcels, :parcels, column: 'parcel_id', primary_key: 'code'
 
     execute <<-SQL
       ALTER TABLE invoices_parcels

@@ -3,10 +3,10 @@ class Batch < ApplicationRecord
 
   has_one_attached :file
 
-  validates :batch_id, presence: true,
-                       numericality: true
+  validates :id, presence: true,
+                 numericality: true
 
-  validates_format_of :batch_id, with: /[0-9]{7}/
+  validates_format_of :id, with: /[0-9]{7}/
 
   validates :creation_date, presence: true
   validates :guid, presence: true, uniqueness: true

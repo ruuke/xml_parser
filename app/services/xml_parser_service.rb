@@ -5,9 +5,9 @@ class XmlParserService
   end
 
   def call
-    parse_data
+    parse_xml_data
     batch_update
-    create_invoices
+    handle_invoices
   end
 
   private
@@ -16,79 +16,67 @@ class XmlParserService
     @batch = batch
     @batch_guid = nil
     @batch_data = nil
-    @invoices = nil
+    @invoice = nil
   end
 
   # получаем данные из xml файла
-  def parse_data
+  def parse_xml_data
     xml = File.open("#{@batch.file_path}")
     doc = Hash.from_xml(xml)
 
     @batch_guid = doc['Root']['FileAttribute']['GUID']
     @batch_data = doc['Root']['FileData']['Batch']
-    @invoices = doc['Root']['FileData']['Invoice']
+    @invoice = doc['Root']['FileData']['Invoice']
   end
 
   # обновляем атрибуты переданносго в сервис объекта и проверяем уникальность GUID
   def batch_update
     @batch.guid = @batch_guid
-    @batch.batch_id = @batch_data['BatchID']
+    @batch.id = @batch_data['BatchID']
     @batch.creation_date = @batch_data['CreationDate']
 
     return if Batch.exists?(guid: @batch_guid)
   end
 
   # создаем объекты накладных
-  def create_invoices
-    if @invoices.is_a?(Hash)
-      @new_invoice = @batch.invoices.build
-
-      @new_invoice.company_code = @invoices['InvoiceOperation']['CompanyCode']
-      @new_invoice.invoice_operation_number = @invoices['InvoiceOperation']['InvoiceOperationNumber']
-      @new_invoice.invoice_operation_date = @invoices['InvoiceOperation']['InvoiceOperationDate']
-
-      create_invoices_parcels(@new_invoice, @invoices['InvoiceData'])
+  def handle_invoices
+    if @invoice.is_a?(Hash)
+      create_invoice(@invoice)
     else
-      @invoices.each do |invoice|
-        @new_invoice = @batch.invoices.build
-
-        @new_invoice.company_code = invoice['InvoiceOperation']['CompanyCode']
-        @new_invoice.invoice_operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
-        @new_invoice.invoice_operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
-
-        create_invoices_parcels(@new_invoice, invoice['InvoiceData'])
-      end
+      @invoice.each { |invoice| create_invoice(invoice) }
     end
+  end
+
+  def create_invoice(invoice)
+    new_invoice = @batch.invoices.build
+
+    new_invoice.company_code = invoice['InvoiceOperation']['CompanyCode']
+    new_invoice.invoice_operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
+    new_invoice.invoice_operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
+
+    handle_invoices_parcels(new_invoice, invoice['InvoiceData'])
   end
 
   # создаем посылки
-  def create_invoices_parcels(invoice, data)
-    invoice_data = data
-    new_invoice = invoice
-
+  def handle_invoices_parcels(invoice, invoice_data)
     if invoice_data.is_a?(Hash)
-      create_parcel(invoice_data['ParcelCode'], data['ParcelPrice'])
-
-      new_invoice.invoices_parcels.build(
-        parcel_id: invoice_data['ParcelCode'],
-        item_qty: invoice_data['ItemQty'],
-        parcel_price: invoice_data['ParcelPrice']
-      )
+      create_invoices_parcel(invoice, invoice_data)
     else
-      invoice_data.each do |data|
-        create_parcel(data['ParcelCode'], data['ParcelPrice'])
-
-        new_invoice.invoices_parcels.build(
-          parcel_id: data['ParcelCode'],
-          item_qty: data['ItemQty'],
-          parcel_price: data['ParcelPrice']
-        )
-      end
+      invoice_data.each { |data| create_invoices_parcel(invoice, data) }
     end
   end
 
+  def create_invoices_parcel(invoice, invoice_data)
+    create_parcel(invoice_data['ParcelCode'], invoice_data['ParcelPrice'])
+
+    invoice.invoices_parcels.build(
+      parcel_id: invoice_data['ParcelCode'],
+      item_qty: invoice_data['ItemQty']
+    )
+  end
+
   # создаем товары
-  def create_parcel(parcel_code, parcel_price)
-    Parcel.create(parcel_code: parcel_code, parcel_price: parcel_price) unless Parcel.exists?(parcel_code: parcel_code)
+  def create_parcel(code, price)
+    Parcel.create(code: code, price: price) unless Parcel.exists?(code: code)
   end
 end
