@@ -14,9 +14,6 @@ class XmlParserService
 
   def initialize(batch)
     @batch = batch
-    @batch_guid = nil
-    @batch_data = nil
-    @invoice = nil
   end
 
   # получаем данные из xml файла
