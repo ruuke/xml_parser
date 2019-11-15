@@ -46,8 +46,8 @@ class XmlParserService
     new_invoice = @batch.invoices.build
 
     new_invoice.company_code = invoice['InvoiceOperation']['CompanyCode']
-    new_invoice.invoice_operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
-    new_invoice.invoice_operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
+    new_invoice.operation_number = invoice['InvoiceOperation']['InvoiceOperationNumber']
+    new_invoice.operation_date = invoice['InvoiceOperation']['InvoiceOperationDate']
 
     handle_invoices_parcels(new_invoice, invoice['InvoiceData'])
   end

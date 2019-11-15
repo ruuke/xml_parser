@@ -1,9 +1,9 @@
 class CreateInvoices < ActiveRecord::Migration[5.2]
   def up
     create_table :invoices, id: false do |t|
-      t.integer :invoice_operation_number, primary_key: true
+      t.integer :operation_number, primary_key: true
       t.integer :company_code, null: false
-      t.datetime :invoice_operation_date, null: false, comment: 'Дата отправки посылки'
+      t.datetime :operation_date, null: false, comment: 'Дата отправки посылки'
       t.references :batch_id,  references: :batches, null: false
 
       t.timestamps
@@ -14,8 +14,8 @@ class CreateInvoices < ActiveRecord::Migration[5.2]
 
     execute <<-SQL
       ALTER TABLE invoices
-        ADD CONSTRAINT invoice_operation_number_size
-        CHECK (invoice_operation_number > 1 AND invoice_operation_number < 1000000000);
+        ADD CONSTRAINT operation_number_size
+        CHECK (operation_number > 1 AND operation_number < 1000000000);
 
       ALTER TABLE invoices
         ADD CONSTRAINT company_code_size
