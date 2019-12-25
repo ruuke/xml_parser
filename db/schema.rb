@@ -43,9 +43,9 @@ ActiveRecord::Schema.define(version: 2019_11_08_092601) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "invoices", primary_key: "invoice_operation_number", id: :serial, force: :cascade do |t|
+  create_table "invoices", primary_key: "operation_number", id: :serial, force: :cascade do |t|
     t.integer "company_code", null: false
-    t.datetime "invoice_operation_date", null: false, comment: "Дата отправки посылки"
+    t.datetime "operation_date", null: false, comment: "Дата отправки посылки"
     t.bigint "batch_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -58,6 +58,7 @@ ActiveRecord::Schema.define(version: 2019_11_08_092601) do
     t.string "parcel_id", limit: 15, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["invoice_id", "parcel_id"], name: "index_invoices_parcels_on_invoice_id_and_parcel_id", unique: true
     t.index ["invoice_id"], name: "index_invoce_invoices_parcel"
     t.index ["parcel_id"], name: "index_parcel_invoices_parcel"
   end
@@ -71,6 +72,6 @@ ActiveRecord::Schema.define(version: 2019_11_08_092601) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "invoices", "batches"
-  add_foreign_key "invoices_parcels", "invoices", primary_key: "invoice_operation_number"
+  add_foreign_key "invoices_parcels", "invoices", primary_key: "operation_number"
   add_foreign_key "invoices_parcels", "parcels", primary_key: "code"
 end

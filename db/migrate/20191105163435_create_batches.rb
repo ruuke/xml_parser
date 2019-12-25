@@ -10,7 +10,7 @@ class CreateBatches < ActiveRecord::Migration[5.2]
 
     execute <<-SQL
       ALTER TABLE batches
-        ADD CONSTRAINT batch_id_size
+        ADD CONSTRAINT id_size
         CHECK (id > 999999 AND id < 10000000);
     SQL
   end

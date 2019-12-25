@@ -6,10 +6,8 @@ class BatchesController < ApplicationController
   rescue_from ActionController::ParameterMissing, with: :rescue_unattached_file
   # обрабатываем все что не соответсвует валидному файлу
   rescue_from REXML::ParseException, with: :rescue_parse_exception
-  # все уникальные ключи будут давать ошибку при повторной загрузке
-  rescue_from PG::UniqueViolation, with: :rescue_duplicate
-  # плохо, но куда деваться, обрабатываем nil'ы и отсутстие данных файле
-  rescue_from NoMethodError, with: :rescue_no_method_error
+  # плохо, но куда деваться, обрабатываем nil'ы и отсутстие данных в файле
+  rescue_from NoMethodError, with: :rescue_parse_exception
 
   def new
     @batch = Batch.new
@@ -17,7 +15,7 @@ class BatchesController < ApplicationController
 
   def create
     @batch = Batch.new(batch_params)
-    XmlParserService.call(@batch)
+    CreateBatchJob.perform_now(@batch)
 
     if @batch.save
       redirect_to @batch, notice: "OK"
@@ -43,14 +41,6 @@ class BatchesController < ApplicationController
   end
 
   def rescue_parse_exception
-    redirect_to new_batch_url, notice: 'Невалидное содержимое файла.'
-  end
-
-  def rescue_duplicate
-    redirect_to new_batch_url, notice: 'Попытка повторной загрузки списка.'
-  end
-
-  def rescue_no_method_error
     redirect_to new_batch_url, notice: 'Невалидное содержимое файла.'
   end
 end

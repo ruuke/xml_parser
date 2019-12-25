@@ -6,6 +6,7 @@ describe Parcel, type: :model do
 
     it { should have_many(:invoices).through(:invoices_parcels) }
     it { should have_many :invoices_parcels }
+    it { should validate_uniqueness_of(:code).ignoring_case_sensitivity }
     it { should validate_numericality_of(:price).is_greater_than(0) }
     it { should validate_numericality_of(:price).is_less_than_or_equal_to(90000) }
 
